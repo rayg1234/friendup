@@ -1,0 +1,17 @@
+<!-- extend from base layout -->
+<!-- { extends "layout/base.html" } -->
+
+{% block content %}
+<form action="" method="post" name="index">
+    {{form.hidden_tag()}}
+
+    <p>
+        Please enter your Meetup ID:<br>
+        {{form.PID1(size=80)}}<br>
+	Please enter your Interest:<br>
+        {{form.Interest1(size=80)}}<br>
+    </p>
+    <p>{{form.remember_me}} Remember Me</p>
+    <p><input type="submit" value="Get Match!"></p>
+</form>
+{% endblock %}

@@ -1,0 +1,7 @@
+config = {
+  'user': 'root',
+  'password': '',
+  'host': 'localhost',
+  'database': 'peopledatadb2',
+  'port': '3306',
+}
