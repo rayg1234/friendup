@@ -4,3 +4,4 @@ app/static/vendor
 node_modules
 *.pyc
 dbconfig.py
+*.*~
