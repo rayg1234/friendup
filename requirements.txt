@@ -5,6 +5,7 @@ MarkupSafe==0.19
 PyMySQL==0.6.2
 WTForms==1.0.5
 Werkzeug==0.9.4
+backports.ssl-match-hostname==3.4.0.2
 gensim==0.10.0
 gunicorn==18.0
 ipython==2.1.0
@@ -14,5 +15,7 @@ numpy==1.8.1
 pyparsing==2.0.1
 python-dateutil==1.5
 pytz==2014.3
+pyzmq==14.3.1
 six==1.6.1
+tornado==3.2.2
 wsgiref==0.1.2

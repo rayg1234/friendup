@@ -7,7 +7,7 @@ from app.helpers.database import con_db
 from forms import LoginForm
 
 import pymysql
-#import gensim
+import gensim.models.word2vec as W2V
 from dbconfig import theconfig
 import GetMatch
 
@@ -15,6 +15,7 @@ import GetMatch
 # within your view functions:
 # con = con_db(host, port, user, passwd, db)
 cur = GetMatch.GetConnection()
+model1 = W2V.Word2Vec.load_word2vec_format('vectors7850.bin', binary=True)
 
 # ROUTING/VIEW FUNCTIONS
 @app.route('/', methods =['GET', 'POST'])
@@ -25,13 +26,14 @@ def index():
 	
 	if form.validate_on_submit():
 		#flash('Login requested for OpenID="' + form.openid.data + '", remember_me=' + str(form.remember_me.data))
-		print form.PID1.data
-		print form.Interest1.data
+		#print form.PID1.data
+		#print form.Interest1.data
 		res,total,photolink,yourname,matchname = GetMatch.MatchOnInterest(cur,form.PID1.data,form.Interest1.data);
+		
 		#flash('Match Name =' + res[0][0] + '", remember_me=' + str(form.remember_me.data))
 		#print res
 		#print total
-		return render_template('/TestTemp.html',res = res, total = total,photolink = photolink, matchname = matchname)
+		return render_template('/TestTemp.html',res = res, total = total,photolink = photolink, matchname = matchname,yourname = yourname)
 	return render_template('/index.html', title ='Test',form = form)
 
 @app.route('/home')
