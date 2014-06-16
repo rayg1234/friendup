@@ -17,14 +17,25 @@ def GenerateInterestSet(PrimaryInts,model,cutoff):
 	intset = []
 	modelcutoff = cutoff
 	for r in PrimaryInts:
-		sims = model.most_similar(positive=[r],topn=10)
-		[intset.append((x[0])) for x in sims if x[1] > modelcutoff]
+		try:
+			sims = model.most_similar(positive=[r.replace(" ","_")],topn=10)
+			[intset.append((x[0])) for x in sims if x[1] > modelcutoff]
+		except(KeyError):
+			print str(KeyError) + " " + str(r)
+		
 	intset = list(set(intset))
+	print intset
 	return intset
 
-def MatchOnInterests(cur,theinterests):
+def MatchOnInterests(cur,theinterests,**kwargs):
+	lim = kwargs.get('limit',None) #total results to return
+	if lim is None:
+		lim = 10
+	if(theinterests == []):
+		print "Null interests"
+		return []
 	x = ''
-	for r in intset:
+	for r in theinterests:
     		x +=  "\'" + r + "\',"
 
 	theq = "select \
@@ -35,10 +46,50 @@ def MatchOnInterests(cur,theinterests):
     			IName in (%s) \
 		group by PID \
 		order by count(*) desc \
-		limit 10" % (x[0:-1].replace("_"," "))
+		limit %s" % (x[0:-1].replace("_"," "),lim)
 	cur.execute(theq)
 	res = cur.fetchall() #returns a list of matches (# in common, Name, PID)
 	return [x for x in res]
+
+def CreateSubsetView(cur,theinterests,viewname,**kwargs):
+	lim = kwargs.get('limit',None) #total results to return
+	if lim is None:
+		lim = 10
+	if(theinterests == []):
+		print "Null interests"
+		return []
+	x = ''
+	for r in theinterests:
+    		x +=  "\'" + r + "\',"
+
+	theq = "create view sub1 as ( \
+			select \
+    				PID, PName \
+			from \
+    				PeopleLikeInterestsAL7 \
+			where \
+    				IName in (%s) \
+			limit %s \
+			);" % (x[0:-1].replace("_"," "),lim)
+	#print theq
+	cur.execute(theq)
+
+	theq2 = "create view %s as ( \
+			select \
+    				PeopleLikeInterestsAL7.PID, PeopleLikeInterestsAL7.PName, PeopleLikeInterestsAL7.IID, IName \
+			from \
+    				sub1 \
+        		join \
+    				PeopleLikeInterestsAL7 ON PeopleLikeInterestsAL7.PID = sub1.PID);" % (viewname)
+	cur.execute(theq2)
+	theq3 = "drop view sub1;"
+	cur.execute(theq3)
+	return
+
+def DropView(cur,viewname):
+	theq = "drop view %s" % (viewname)
+	cur.execute(theq)
+	return
 
 def GetInterests_byPID(cur,PID):
 	theq = "select IName from PeopleLikeInterestsAL7 where PID = %s" % str(PID)

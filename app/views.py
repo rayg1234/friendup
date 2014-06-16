@@ -25,15 +25,23 @@ def index():
 	total = 0
 	
 	if form.validate_on_submit():
+		print "valid"
 		#flash('Login requested for OpenID="' + form.openid.data + '", remember_me=' + str(form.remember_me.data))
 		#print form.PID1.data
 		#print form.Interest1.data
-		res,total,photolink,yourname,matchname = GetMatch.MatchOnInterest(cur,form.PID1.data,form.Interest1.data);
-		
+		#res,total,photolink,yourname,matchname = GetMatch.MatchOnInterest(cur,form.PID1.data,form.Interest1.data);
+		userints = []
+		userints.append(form.Interest1.data)
+		userints.append(form.Interest2.data)
+		userints.append(form.Interest3.data)
+		userints.append(form.Interest4.data)
+		intset = GetMatch.GenerateInterestSet(userints,model1,0.55)
+		res = GetMatch.MatchOnInterests(cur,intset)
+		pids = [x[2] for x in res]
+		newints = [GetMatch.GetInterests_byPID(cur,y) for y in pids]
 		#flash('Match Name =' + res[0][0] + '", remember_me=' + str(form.remember_me.data))
-		#print res
-		#print total
-		return render_template('/TestTemp.html',res = res, total = total,photolink = photolink, matchname = matchname,yourname = yourname)
+		#print newints
+		return render_template('/TestTemp.html',res = res,newints=newints)
 	return render_template('/index.html', title ='Test',form = form)
 
 @app.route('/home')

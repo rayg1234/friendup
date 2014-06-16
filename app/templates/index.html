@@ -1,22 +1,61 @@
-<!-- extend from base layout -->
-<!-- { extends "layout/base.html" } -->
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="{{ url_for('static', filename="vendor/bootstrap/dist/js/bootstrap.js") }}"></script>
+<link href="{{ url_for('static', filename='vendor/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename="js/typeahead_old.js") }}"></script>
+<link href="{{ url_for('static', filename='css/typeahead_old.css') }}" rel="stylesheet">
 
 {% block content %}
-<form action="" method="post" name="index">
+<div class="”container”">
+<h1><a href="”#”">UpFindr</a></h1>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form action="" method="post" name="index">
     {{form.hidden_tag()}}
 
     <p>
         Please enter your Meetup ID:<br>
-        {{form.PID1(size=40)}}<br>
+        {{form.PID1(size=30)}}<br>
 	What activity?:<br>
-        {{form.Interest1(size=40)}}<br>
-	Pick an interest:<br>
-        {{form.Interest2(size=40)}}<br>
-	Pick an interest:<br>
-        {{form.Interest3(size=40)}}<br>
-	Pick an interest:<br>
-        {{form.Interest4(size=40)}}<br>
+        {{form.Interest1(size=30)}}<br>
+	Specify a Top Interest:<br>
+        {{form.Interest2(size=30)}}<br>
+	Specify a Top Interest:<br>
+        {{form.Interest3(size=30)}}<br>
+	Specify a Top Interest:<br>
+        {{form.Interest4(size=30)}}<br>
     </p>
     <p><input type="submit" value="Get Match!"></p>
 </form>
+  </div>
+</div>
+
+
+
+
+<script>
+	//$('#Interest1').typeahead([{name: 'IName', prefetch: 'interestvocab.json',}]);
+	//var vocabsource; // a global
+	//var my_json;
+	$("#Interest1").attr("autocomplete", "off");
+	$('#Interest1').typeahead({prefetch: "static/sample1.json"});
+
+	$("#Interest2").attr("autocomplete", "off");
+	$('#Interest2').typeahead({prefetch: "static/sample1.json"});
+
+	$("#Interest3").attr("autocomplete", "off");
+	$('#Interest3').typeahead({prefetch: "static/sample1.json"});
+	
+	$("#Interest4").attr("autocomplete", "off");
+	$('#Interest4').typeahead({prefetch: "static/sample1.json"});
+	//$('#PID1').typeahead({local: mySource});
+
+	
+</script>
+
+
 {% endblock %}
+
+
+

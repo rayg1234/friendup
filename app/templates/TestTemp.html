@@ -1,20 +1,24 @@
-{% block content %}
-Total number of interests in common
-{{total}}
-<p>
-Your Name: {{yourname}}
-<p>
-<img style="border:0;" src="{{photolink}}" alt="HTML tutorial" width="100" height="100">
-<p>
-Your Match's Name: {{matchname}}
-<p>
-Your match's interests
-<p>
-{% for r in res %}
-{{r[1]}}<br>
 
+
+{% block content %}
+
+{% for r in res %}
+total interests in common: {{r[0]}}<br>
+name: {{r[1]}}<br>
+PID: {{r[2]}}<br>
+{{newints[loop.index]}}<p>
 
 {% endfor %}
 
 
 {% endblock %}
+
+<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+  <li><a tabindex="-1" href="#">Action</a></li>
+  <li><a tabindex="-1" href="#">Another action</a></li>
+  <li><a tabindex="-1" href="#">Something else here</a></li>
+  <li class="divider"></li>
+  <li><a tabindex="-1" href="#">Separated link</a></li>
+</ul>
+
+
