@@ -8,31 +8,53 @@
 
 {% block content %}
 <div class="”container”">
+
+
+
 <h1><a href="”#”">UpFindr</a></h1>
+<div class="col-sm-4">
+
 <div class="panel panel-default">
   <div class="panel-body">
-    <form action="" method="post" name="index">
-    {{form.hidden_tag()}}
+	    <form action="" method="post" name="index">
+	    {{form.hidden_tag()}}
 
-    <p>
-        Please enter your Meetup ID:<br>
-        {{form.PID1(size=30)}}<br>
-	What activity?:<br>
-        {{form.Interest1(size=30)}}<br>
-	Specify a Top Interest:<br>
-        {{form.Interest2(size=30)}}<br>
-	Specify a Top Interest:<br>
-        {{form.Interest3(size=30)}}<br>
-	Specify a Top Interest:<br>
-        {{form.Interest4(size=30)}}<br>
-    </p>
-    <p><input type="submit" value="Get Match!"></p>
-</form>
-  </div>
+	    <p>
+		Please enter your Meetup ID:<br>
+		{{form.PID1(size=30)}}<br>
+		What activity?:<br>
+		{{form.Interest1(size=30)}}<br>
+		Specify a Top Interest:<br>
+		{{form.Interest2(size=30)}}<br>
+		Specify a Top Interest:<br>
+		{{form.Interest3(size=30)}}<br>
+		Specify a Top Interest:<br>
+		{{form.Interest4(size=30)}}<br>
+	    </p>
+	    <p><input type="submit" value="Get Match!" class="btn btn-default btn-lg"></p>
+		</form>
+</div>
+</div>
+</div>
+	<div class="col-md-7">
+             <div class="panel panel-default">
+		<div class="panel-body">
+                 <div class="panel-heading">The Matches</div>
+		<div class="col-sm-5">
+		Your info
+		</div>
+		<div class="col-sm-5">
+		Your Matches info
+		</div>
+		</div>
+            </div>
+        </div>
+
 </div>
 
 
-
+        
+</div>
 
 <script>
 	//$('#Interest1').typeahead([{name: 'IName', prefetch: 'interestvocab.json',}]);
@@ -53,6 +75,8 @@
 
 	
 </script>
+
+
 
 
 {% endblock %}

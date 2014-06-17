@@ -1,10 +1,8 @@
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, jsonify, request
 from app import app
 #host, port, user, passwd, db
 from forms import LoginForm
-from flask import request
 from app.helpers.database import con_db
-from forms import LoginForm
 
 import pymysql
 import gensim.models.word2vec as W2V
@@ -26,23 +24,53 @@ def index():
 	
 	if form.validate_on_submit():
 		print "valid"
-		#flash('Login requested for OpenID="' + form.openid.data + '", remember_me=' + str(form.remember_me.data))
-		#print form.PID1.data
-		#print form.Interest1.data
-		#res,total,photolink,yourname,matchname = GetMatch.MatchOnInterest(cur,form.PID1.data,form.Interest1.data);
-		userints = []
-		userints.append(form.Interest1.data)
-		userints.append(form.Interest2.data)
-		userints.append(form.Interest3.data)
-		userints.append(form.Interest4.data)
-		intset = GetMatch.GenerateInterestSet(userints,model1,0.55)
-		res = GetMatch.MatchOnInterests(cur,intset)
-		pids = [x[2] for x in res]
-		newints = [GetMatch.GetInterests_byPID(cur,y) for y in pids]
-		#flash('Match Name =' + res[0][0] + '", remember_me=' + str(form.remember_me.data))
-		#print newints
-		return render_template('/TestTemp.html',res = res,newints=newints)
+		#get all other ints
+		interest1 = form.Interest1.data
+		topinterests = []
+		topinterests.append(form.Interest2.data)
+		topinterests.append(form.Interest3.data)
+		topinterests.append(form.Interest4.data)
+
+		#get the primary interest set with high fidelity
+		primary_intset = GetMatch.GenerateInterestSet([interest1],model1,0.60)
+		topintsets =[]
+		for i in topinterests:
+		    topintsets.append(GetMatch.GenerateInterestSet([i],model1,0.55))
+		intset_all = GetMatch.GenerateInterestSet(topinterests,model1,0.55)
+
+
+		#get subset of primary matches
+		primarymatches = GetMatch.MatchOnInterests(cur,primary_intset,limit=10000)
+		PIDS = [x[2] for x in primarymatches]
+		
+		#get refined matches on other matches
+		r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=20)
+		
+
+		#start with r[0]
+
+		currentmatch = r[0]
+		matchphoto = GetMatch.GetPhoto_byPID(cur,currentmatch[0])
+		matchname = currentmatch[1]
+		matchset_top = GetMatch.GetIntersect(cur,primary_intset,currentmatch[0])
+		matchset_rest = []
+		#print currentmatch[0]
+		#print matchset_top
+		for curset in topintsets:
+			theintersect = GetMatch.GetIntersect(cur,curset,currentmatch[0])
+			matchset_rest.append(theintersect)
+			#print(theintersect)
+		#print matchset_rest
+		results = {'key':'value'}
+
+		return render_template('/index.html',form=form,results = results)
 	return render_template('/index.html', title ='Test',form = form)
+
+@app.route('/_add_numbers')
+def add_numbers():
+    a = request.args.get('a', 0, type=int)
+    b = request.args.get('b', 0, type=int)
+    return jsonify(result=a + b)
 
 @app.route('/home')
 def home():
