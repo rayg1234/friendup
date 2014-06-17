@@ -53,7 +53,7 @@ border-radius: 15px;
              <div class="panel panel-default">
 		<div class="panel-body">
                  <div class="panel-heading">The Matches</div>
-		<div class="col-lg-10" id="datatablediv">
+		<div class="col-lg-9" id="datatablediv">
 			<table class="table">
 				<thead></thead>
 				<tbody></tobdy>
@@ -166,20 +166,26 @@ function tabulate_new(thedata) {
 		.enter()
 		.append("tr");
 
-	primeint_row
-		.selectAll("td")
-		.data([thedata['matchset_top']['you'],'',thedata['matchset_top']['match']])
-		.enter()
-		.append("td")
-		  .text(function(d) { return d; });
+	primeint_row.append("td").text(thedata['matchset_top']['you']);
+	primeint_row.append("td");
+	newtd = primeint_row.append("td");
+	for(i=0, len=thedata['matchset_top']['match'].length;i<len;i++) {
+		newtd.append("tr").text(thedata['matchset_top']['match'][i]);
+	}
+	
 	
 	//append a row for each interest set match
 	for(i=0, len=thedata['matchset_rest']['match'].length;i<len;i++) {
 		newrow = tbody.append("tr");
-		for(j=0;j<thedata['matchset_rest']['match'][i].length;j++)		{
-			newrow.append("td").text(thedata['matchset_rest']['you'][i]);
-			newrow.append("td").text("");
-			newrow.append("td").text(thedata['matchset_rest']['match'][i]);
+		
+		newtd = newrow.append("td");
+		for(j=0;j<thedata['matchset_rest']['you'][i].length;j++) {
+			newtd.append("tr").text(thedata['matchset_rest']['you'][i][j]);
+		}
+		newrow.append("td").text("");
+		newtd = newrow.append("td");
+		for(j=0;j<thedata['matchset_rest']['match'][i].length;j++) {
+			newtd.append("tr").text(thedata['matchset_rest']['match'][i][j]);
 		}	
 	}	
 

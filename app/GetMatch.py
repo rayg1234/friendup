@@ -17,9 +17,12 @@ def GenerateInterestSet(PrimaryInts,model,cutoff):
 	intset = []
 	modelcutoff = cutoff
 	for r in PrimaryInts:
+		if(r == '' or r is None):
+			continue;
 		try:
 			sims = model.most_similar(positive=[r.replace(" ","_")],topn=10)
 			[intset.append((x[0])) for x in sims if x[1] > modelcutoff]
+			intset.append(r)
 		except(KeyError):
 			print str(KeyError) + " " + str(r)
 		

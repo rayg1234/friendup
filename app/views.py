@@ -35,6 +35,9 @@ def index():
 
 @app.route('/generate_match')
 def generate_match():
+	#get your user info
+	
+	#get the interests to match to
     	primeint = request.args.get('primeint', 0, type=str)
 	int1 = request.args.get('int1', 0, type=str)
 	int2 = request.args.get('int2', 0, type=str)
@@ -76,7 +79,10 @@ def generate_match():
 		#print(theintersect)
 	print matchset_rest
 
-	ret = {'photo':{'you':'yourphoto','match':matchphoto[0]},'name':{'you':'yourname','match':matchname},'matchset_top':{'you':'yourset','match':matchset_top},'matchset_rest': {'you':'yourset','match':matchset_rest}}
+	ret = {'photo':{'you':'yourphoto','match':matchphoto[0]},\
+		'name':{'you':'You','match':matchname},\
+		'matchset_top':{'you':[primeint],'match':matchset_top},\
+		'matchset_rest': {'you':[[topinterests[0]],[topinterests[1]],[topinterests[2]]],'match':matchset_rest}}
     	return jsonify(ret);
 
 @app.route('/_add_numbers')
