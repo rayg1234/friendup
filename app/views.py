@@ -76,7 +76,7 @@ def generate_match():
 		#print(theintersect)
 	print matchset_rest
 
-	ret = {'photo':{'you':'yourphoto','match':matchphoto},'name':{'you':'yourname','match':matchname},'matchset_top':{'you':'yourset','match':matchset_top},'matchset_rest': {'you':'yourset','match':matchset_rest}}
+	ret = {'photo':{'you':'yourphoto','match':matchphoto[0]},'name':{'you':'yourname','match':matchname},'matchset_top':{'you':'yourset','match':matchset_top},'matchset_rest': {'you':'yourset','match':matchset_rest}}
     	return jsonify(ret);
 
 @app.route('/_add_numbers')

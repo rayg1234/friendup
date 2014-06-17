@@ -8,6 +8,13 @@
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
+<style>
+
+.roundrect {
+border-radius: 15px;
+}
+
+</style>
 
 {% block content %}
 <div class="”container”">
@@ -59,17 +66,10 @@
 </div>
 
 
-
-
-
         
 </div>
 
-<script>
-	//$('#Interest1').typeahead([{name: 'IName', prefetch: 'interestvocab.json',}]);
-	//var vocabsource; // a global
-	//var my_json;
-	var testid = ["1234"];	
+<script>	
 
 	/**$("#ID_PrimeActivity").attr("autocomplete", "off");
 	$('#ID_PrimeActivity').typeahead({prefetch: "static/sample1.json"});
@@ -111,35 +111,26 @@ var thecurrentdata;
 	//console.log(data)
         //$("#result").text(data.result);
 	 // create some people
-	var people = [
-	    {name: "Jill", age: 30},
-	    {name: "Bob", age: 32},
-	    {name: "George", age: 29},
-	    {name: "Sally", age: 31}
-	];
 
 	// render the table
-	var peopleTable = tabulate(data);
+	var peopleTable = tabulate_new(data);
       });
       return false;
     });
   });
 
-function tabulate(thedata) {
+function tabulate_new(thedata) {
 
-    //var table = d3.select("#datatable").append("table").attr("class", "table"),
-    //    thead = table.append("thead"),
-    //    tbody = table.append("tbody");
-	console.log(thedata['name'])
-    var tbody = d3.select('tbody');
+	console.log(thedata)
+	var tbody = d3.select('tbody');
 
-	//tbody.selectAll("td").remove();
+	tbody.selectAll("tr").remove();
     // create a row for each object in the data
-    var names_row = tbody.selectAll("tr")
-		 .data(['namerow'])
+	var names_row = tbody.selectAll("tr")
+		 .data(['namerow'],function(d){return d;})
 		 .enter()
 		 .append("tr");
-	
+
 	names_row
 		.selectAll("td")
 		.data([thedata['name']['you'],'',thedata['name']['match']])
@@ -147,7 +138,52 @@ function tabulate(thedata) {
 		.append("td")
 		  .text(function(d) { return d; });
 	
-		
+	var photos_row = tbody.selectAll("tr")
+		.data(['photorow'],function(d){return d;})
+		.enter()
+		.append("tr");
+
+	photos_row
+		.append("td")
+		.append("img")
+		.attr("width",75)
+		.attr("height",75)
+		.attr("class","roundrect")
+		.attr("src", thedata['photo']['you']);
+
+	photos_row.append("td");
+	
+	photos_row
+		.append("td")
+		.append("img")
+		.attr("width",75)
+		.attr("height",75)
+		.attr("class","roundrect")
+		.attr("src", thedata['photo']['match']);
+
+	var primeint_row = tbody.selectAll("tr")
+		.data(['primerow'],function(d){return d;})
+		.enter()
+		.append("tr");
+
+	primeint_row
+		.selectAll("td")
+		.data([thedata['matchset_top']['you'],'',thedata['matchset_top']['match']])
+		.enter()
+		.append("td")
+		  .text(function(d) { return d; });
+	
+	//append a row for each interest set match
+	for(i=0, len=thedata['matchset_rest']['match'].length;i<len;i++) {
+		newrow = tbody.append("tr");
+		for(j=0;j<thedata['matchset_rest']['match'][i].length;j++)		{
+			newrow.append("td").text(thedata['matchset_rest']['you'][i]);
+			newrow.append("td").text("");
+			newrow.append("td").text(thedata['matchset_rest']['match'][i]);
+		}	
+	}	
+
+
 		//row_name
 		//.data(['topmatch'])
 		//.enter()
