@@ -22,3 +22,22 @@ PID: {{r[2]}}<br>
 </ul>
 
 
+  	<div class="panel-body">
+	    <form action="" method="post" name="index">
+	    {{form.hidden_tag()}}
+
+	    <p>
+		Please enter your Meetup ID:<br>
+		{{form.PID1(size=30)}}<br>
+		What activity?:<br>
+		{{form.Interest1(size=30)}}<br>
+		Specify a Top Interest:<br>
+		{{form.Interest2(size=30)}}<br>
+		Specify a Top Interest:<br>
+		{{form.Interest3(size=30)}}<br>
+		Specify a Top Interest:<br>
+		{{form.Interest4(size=30)}}<br>
+	    </p>
+	    <p><input type="submit" value="Get Match!" class="btn btn-default btn-lg"></p>
+		</form>
+	</div>

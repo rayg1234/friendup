@@ -4,7 +4,10 @@
 <script src="{{ url_for('static', filename="vendor/bootstrap/dist/js/bootstrap.js") }}"></script>
 <link href="{{ url_for('static', filename='vendor/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 <script src="{{ url_for('static', filename="js/typeahead_old.js") }}"></script>
-<link href="{{ url_for('static', filename='css/typeahead_old.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/typeahead_new.css') }}" rel="stylesheet">
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
 
 {% block content %}
 <div class="”container”">
@@ -12,45 +15,51 @@
 
 
 <h1><a href="”#”">UpFindr</a></h1>
-<div class="col-sm-4">
+<div class="col-sm-3">
 
 <div class="panel panel-default">
-  <div class="panel-body">
-	    <form action="" method="post" name="index">
-	    {{form.hidden_tag()}}
+  	<div class="panel-body">
+	    <form role="form">
+			  <div class="form-group">
+			    <label for="lb1">Your Meetup ID</label>
+			    <input type="" class="form-control" id="ID_Meetupid" placeholder="eg: 148054682" size="37">
+			  </div>
+			  <div class="form-group">
+			    <label for="lb2">Your Activity</label>
+			    <input type="" class="form-control" id="ID_PrimeActivity" placeholder="eg: Snowboarding" size= "37">
+			   </div>
+			  <div class="form-group">
+			    <label for="lb3">Your Other Top Interests</label>
+			    <input type="" class="form-control" id="ID_Interest1" placeholder="eg: Salsa" size= "37">
+			    <input type="" class="form-control" id="ID_Interest2" placeholder="eg: Swimming" size= "37">
+			    <input type="" class="form-control" id="ID_Interest3" placeholder="eg: Electronic Music" size= "37">
+			 
+			  </div>
+			  <button ID="ID_getmatch" type="submit" class="btn btn-default">Match Now!</button>
+			</form>
 
-	    <p>
-		Please enter your Meetup ID:<br>
-		{{form.PID1(size=30)}}<br>
-		What activity?:<br>
-		{{form.Interest1(size=30)}}<br>
-		Specify a Top Interest:<br>
-		{{form.Interest2(size=30)}}<br>
-		Specify a Top Interest:<br>
-		{{form.Interest3(size=30)}}<br>
-		Specify a Top Interest:<br>
-		{{form.Interest4(size=30)}}<br>
-	    </p>
-	    <p><input type="submit" value="Get Match!" class="btn btn-default btn-lg"></p>
-		</form>
-</div>
+
+	</div>
 </div>
 </div>
 	<div class="col-md-7">
              <div class="panel panel-default">
 		<div class="panel-body">
                  <div class="panel-heading">The Matches</div>
-		<div class="col-sm-5">
-		Your info
-		</div>
-		<div class="col-sm-5">
-		Your Matches info
+		<div class="col-lg-10" id="datatablediv">
+			<table class="table">
+				<thead></thead>
+				<tbody></tobdy>
+			</table>
 		</div>
 		</div>
             </div>
         </div>
 
 </div>
+
+
+
 
 
         
@@ -60,23 +69,101 @@
 	//$('#Interest1').typeahead([{name: 'IName', prefetch: 'interestvocab.json',}]);
 	//var vocabsource; // a global
 	//var my_json;
-	$("#Interest1").attr("autocomplete", "off");
-	$('#Interest1').typeahead({prefetch: "static/sample1.json"});
+	var testid = ["1234"];	
 
-	$("#Interest2").attr("autocomplete", "off");
-	$('#Interest2').typeahead({prefetch: "static/sample1.json"});
+	/**$("#ID_PrimeActivity").attr("autocomplete", "off");
+	$('#ID_PrimeActivity').typeahead({prefetch: "static/sample1.json"});
 
-	$("#Interest3").attr("autocomplete", "off");
-	$('#Interest3').typeahead({prefetch: "static/sample1.json"});
-	
-	$("#Interest4").attr("autocomplete", "off");
-	$('#Interest4').typeahead({prefetch: "static/sample1.json"});
+	$("#ID_Meetupid").attr("autocomplete", "off");
+	$('#ID_Meetupid').typeahead({local: testid});
+
+
+	$("#ID_Interest1").attr("autocomplete", "off");
+	$('#ID_Interest1').typeahead({prefetch: "static/sample1.json"});
+	$("#ID_Interest2").attr("autocomplete", "off");
+	$('#ID_Interest2').typeahead({prefetch: "static/sample1.json"});
+	$("#ID_Interest3").attr("autocomplete", "off");
+	$('#ID_Interest3').typeahead({prefetch: "static/sample1.json"});
+
+	$('.tt-hint').addClass('form-control');**/
 	//$('#PID1').typeahead({local: mySource});
 
 	
 </script>
 
 
+
+<script type=text/javascript>
+
+var thecurrentdata;
+
+  $(function() {
+    $('#ID_getmatch').bind('click', function() {
+	console.log("get match clicked")
+
+      $.getJSON('/generate_match', {
+        primeint: $('input[id="ID_PrimeActivity"]').val(),
+	int1: $('input[id="ID_Interest1"]').val(),
+	int2: $('input[id="ID_Interest2"]').val(),
+	int3: $('input[id="ID_Interest3"]').val(),
+      }, function(data) {
+	thecurrentdata = data;
+	//console.log(data)
+        //$("#result").text(data.result);
+	 // create some people
+	var people = [
+	    {name: "Jill", age: 30},
+	    {name: "Bob", age: 32},
+	    {name: "George", age: 29},
+	    {name: "Sally", age: 31}
+	];
+
+	// render the table
+	var peopleTable = tabulate(data);
+      });
+      return false;
+    });
+  });
+
+function tabulate(thedata) {
+
+    //var table = d3.select("#datatable").append("table").attr("class", "table"),
+    //    thead = table.append("thead"),
+    //    tbody = table.append("tbody");
+	console.log(thedata['name'])
+    var tbody = d3.select('tbody');
+
+	//tbody.selectAll("td").remove();
+    // create a row for each object in the data
+    var names_row = tbody.selectAll("tr")
+		 .data(['namerow'])
+		 .enter()
+		 .append("tr");
+	
+	names_row
+		.selectAll("td")
+		.data([thedata['name']['you'],'',thedata['name']['match']])
+		.enter()
+		.append("td")
+		  .text(function(d) { return d; });
+	
+		
+		//row_name
+		//.data(['topmatch'])
+		//.enter()
+		//.append("tr")
+		//.selectAll("td")
+		//.data([thedata['matchset_top']['you'],'',thedata['matchset_top']['match']])
+		//.enter()
+		//.append("td")
+		//	.text(function(d) { return d[0]; });
+
+
+
+    return;
+}
+
+</script>
 
 
 {% endblock %}
