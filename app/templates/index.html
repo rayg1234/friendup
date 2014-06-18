@@ -16,7 +16,6 @@ border-radius: 15px;
 
 </style>
 
-{% block content %}
 <div class="”container”">
 
 
@@ -49,7 +48,7 @@ border-radius: 15px;
 	</div>
 </div>
 </div>
-	<div class="col-md-7">
+	<div class="col-md-6">
              <div class="panel panel-default">
 		<div class="panel-body">
                  <div class="panel-heading">The Matches</div>
@@ -96,28 +95,31 @@ border-radius: 15px;
 <script type=text/javascript>
 
 var thecurrentdata;
+var currentmatch_ind = 0;
+var totalmatches = 0;
 
-  $(function() {
-    $('#ID_getmatch').bind('click', function() {
-	console.log("get match clicked")
+$(function() {
+	$('#ID_getmatch').bind('click', function() {
+		console.log("get match clicked")
 
-      $.getJSON('/generate_match', {
-        primeint: $('input[id="ID_PrimeActivity"]').val(),
-	int1: $('input[id="ID_Interest1"]').val(),
-	int2: $('input[id="ID_Interest2"]').val(),
-	int3: $('input[id="ID_Interest3"]').val(),
-      }, function(data) {
-	thecurrentdata = data;
-	//console.log(data)
-        //$("#result").text(data.result);
-	 // create some people
+		$.getJSON('/generate_match', {
+			primeint: $('input[id="ID_PrimeActivity"]').val(),
+			int1: $('input[id="ID_Interest1"]').val(),
+			int2: $('input[id="ID_Interest2"]').val(),
+			int3: $('input[id="ID_Interest3"]').val(),
+			}, function(data) {
+			thecurrentdata = data;
+			//console.log(data)
+			//$("#result").text(data.result);
 
-	// render the table
-	var peopleTable = tabulate_new(data);
-      });
-      return false;
-    });
-  });
+			
+			// render the table
+			totalmatches = Object.keys(data).length
+			tabulate_new(data[0]);
+		});
+		return false;
+	});
+});
 
 function tabulate_new(thedata) {
 
@@ -125,7 +127,8 @@ function tabulate_new(thedata) {
 	var tbody = d3.select('tbody');
 
 	tbody.selectAll("tr").remove();
-    // create a row for each object in the data
+    	// create a row for each object in the data
+	//using part d3 part jquery right now, but not neccesary 
 	var names_row = tbody.selectAll("tr")
 		 .data(['namerow'],function(d){return d;})
 		 .enter()
@@ -187,19 +190,18 @@ function tabulate_new(thedata) {
 		for(j=0;j<thedata['matchset_rest']['match'][i].length;j++) {
 			newtd.append("tr").text(thedata['matchset_rest']['match'][i][j]);
 		}	
-	}	
+	}
 
-
-		//row_name
-		//.data(['topmatch'])
-		//.enter()
-		//.append("tr")
-		//.selectAll("td")
-		//.data([thedata['matchset_top']['you'],'',thedata['matchset_top']['match']])
-		//.enter()
-		//.append("td")
-		//	.text(function(d) { return d[0]; });
-
+	nextbt = tbody.append("tr")
+		.append("button")
+		.attr("id","nextbt")
+		.attr("align","left")
+		.attr("class","btn btn-default")
+		.text("Next Match");
+	$('#nextbt').bind('click', function() { 
+		currentmatch_ind = currentmatch_ind +1;
+		tabulate_new(thecurrentdata[currentmatch_ind%totalmatches]);
+	});
 
 
     return;
@@ -207,8 +209,6 @@ function tabulate_new(thedata) {
 
 </script>
 
-
-{% endblock %}
 
 
 

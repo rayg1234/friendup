@@ -44,9 +44,12 @@ def generate_match():
 	int3 = request.args.get('int3', 0, type=str)
 
 	topinterests = []
-	topinterests.append(int1)
-	topinterests.append(int2)
-	topinterests.append(int3)
+	if(int1 != '' or int1 is None):
+		topinterests.append(int1)
+	if(int2 != '' or int2 is None):
+		topinterests.append(int2)
+	if(int3 != '' or int3 is None):
+		topinterests.append(int3)
 
 	if(topinterests == []):
 		return "null"
@@ -66,23 +69,31 @@ def generate_match():
 	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=20)
 	
 	#start with r[0]
-	currentmatch = r[0]
-	matchphoto = GetMatch.GetPhoto_byPID(cur,currentmatch[0])
-	matchname = currentmatch[1]
-	matchset_top = list(GetMatch.GetIntersect(cur,primary_intset,currentmatch[0]))
-	matchset_rest = []
-	#print currentmatch[0]
-	#print matchset_top
-	for curset in topintsets:
-		theintersect = GetMatch.GetIntersect(cur,curset,currentmatch[0])
-		matchset_rest.append(list(theintersect))
-		#print(theintersect)
-	print matchset_rest
+	ret = {}
+	for i,currentmatch in enumerate(r):
+		#currentmatch = r[0]
+		matchphotos = GetMatch.GetPhoto_byPID(cur,currentmatch[0])
+		if(matchphotos == []):
+			matchphoto = "/static/happyface1.jpg"
+		else:
+			matchphoto = matchphotos[0]
+		matchname = currentmatch[1]
+		matchset_top = list(GetMatch.GetIntersect(cur,primary_intset,currentmatch[0]))
+		matchset_rest = []
+		#print currentmatch[0]
+		#print matchset_top
+		for curset in topintsets:
+			theintersect = GetMatch.GetIntersect(cur,curset,currentmatch[0])
+			matchset_rest.append(list(theintersect))
+			#print(theintersect)
+		#print matchset_rest
+		#ret[i] = i
+				
 
-	ret = {'photo':{'you':'yourphoto','match':matchphoto[0]},\
-		'name':{'you':'You','match':matchname},\
-		'matchset_top':{'you':[primeint],'match':matchset_top},\
-		'matchset_rest': {'you':[[topinterests[0]],[topinterests[1]],[topinterests[2]]],'match':matchset_rest}}
+		ret[i] = {'photo':{'you':"/static/happyface1.jpg",'match':matchphoto},\
+			'name':{'you':'You','match':matchname},\
+			'matchset_top':{'you':[primeint],'match':matchset_top},\
+			'matchset_rest': {'you':[[x] for x in topinterests],'match':matchset_rest}}
     	return jsonify(ret);
 
 @app.route('/_add_numbers')
