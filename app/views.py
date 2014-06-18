@@ -8,6 +8,7 @@ import pymysql
 import gensim.models.word2vec as W2V
 from dbconfig import theconfig
 import GetMatch
+from Utils import removeNonAscii
 
 # To create a database connection, add the following
 # within your view functions:
@@ -67,6 +68,7 @@ def generate_match():
 	
 	#get refined matches on other matches
 	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=20)
+	r = GetMatch.ReFactorScores_Balanced(cur,r,topintsets)
 	
 	#start with r[0]
 	ret = {}
@@ -84,17 +86,17 @@ def generate_match():
 		#print matchset_top
 		for curset in topintsets:
 			theintersect = GetMatch.GetIntersect(cur,curset,currentmatch[0])
+			#intersect1 = []
+			#for x in theintersect:
+			#	intersect1.append(x.encode('ascii', 'ignore'))
 			matchset_rest.append(list(theintersect))
-			#print(theintersect)
-		#print matchset_rest
-		#ret[i] = i
-				
 
 		ret[i] = {'photo':{'you':"/static/happyface1.jpg",'match':matchphoto},\
-			'name':{'you':'You','match':matchname},\
+			'name':{'you':'You','match':removeNonAscii(matchname)},\
 			'matchset_top':{'you':[primeint],'match':matchset_top},\
 			'matchset_rest': {'you':[[x] for x in topinterests],'match':matchset_rest}}
-    	return jsonify(ret);
+
+    	return jsonify(ret)
 
 @app.route('/_add_numbers')
 def add_numbers():

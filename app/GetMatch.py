@@ -39,7 +39,7 @@ def MatchOnInterests(cur,theinterests,**kwargs):
 		return []
 	x = ''
 	for r in theinterests:
-    		x +=  "\'" + r + "\',"
+    		x +=  "\'" + r.replace("'","''") + "\',"
 
 	theq = "select \
     			count(*), PName,PID \
@@ -50,6 +50,7 @@ def MatchOnInterests(cur,theinterests,**kwargs):
 		group by PID \
 		order by count(*) desc \
 		limit %s" % (x[0:-1].replace("_"," "),lim)
+	#print theq
 	cur.execute(theq)
 	res = cur.fetchall() #returns a list of matches (# in common, Name, PID)
 	return [x for x in res]
@@ -63,7 +64,7 @@ def MatchOnInterests_subset(cur,theinterests,subsetIDs,**kwargs):
 		return []
 	x = ''
 	for r in theinterests:
-    		x +=  "\'" + r + "\',"
+    		x +=  "\'" + r.replace("'","''") + "\',"
 
 	ids = ''
 	for r in subsetIDs:
@@ -86,8 +87,19 @@ def GetIntersect(cur,interestset,matchID):
 	interestset = [x.replace("_"," ") for x in interestset]
 	return set(curset).intersection(set(interestset))
 
-def ReFactorScores_Balanced(cur,matches,intsets,bfactors):
-	pass
+def ReFactorScores_Balanced(cur,matches,intsets,**kwargs):
+	scorecount = []
+	bscore = []
+	for r in matches:
+		thescores = [len(GetIntersect(cur,x,r[0])) for x in intsets]
+		scorecount.append(thescores)
+		y = 1.0
+		for x in thescores:
+			y = (x+1)*y
+		bscore.append(y**(0.25))
+	xs, sorted_matches = zip(*sorted(zip(bscore,matches),reverse=True))
+	return sorted_matches
+	
 
 
 	
