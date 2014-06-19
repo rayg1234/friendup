@@ -82,10 +82,27 @@ def MatchOnInterests_subset(cur,theinterests,subsetIDs,**kwargs):
 	res = cur.fetchall() #returns a list of matches (# in common, Name, PID)
 	return [x for x in res]
 
+
+
 def GetIntersect(cur,interestset,matchID):
 	curset = GetInterests_byPID(cur,matchID)
 	interestset = [x.replace("_"," ") for x in interestset]
 	return set(curset).intersection(set(interestset))
+
+def GetGroupIntersect_byPID(cur,groupids,PID):
+	if(groupids == []):
+		print "Null interests"
+		return []
+	x = ''
+	for r in groupids:
+    		x +=  "\'" + str(r) + "\',"
+
+	theq = "select GID from PeopleGroups where PID = %s and GID in (%s)" % (str(PID),x[0:-1])
+
+	#print theq
+	cur.execute(theq)
+	res = cur.fetchall()
+	return [x[0] for x in res]
 
 def ReFactorScores_Balanced(cur,matches,intsets,**kwargs):
 	#print intsets
@@ -139,6 +156,12 @@ def DropView(cur,viewname):
 	theq = "drop view %s" % (viewname)
 	cur.execute(theq)
 	return
+
+def GetGroups_byPID(cur,PID):
+	theq = "select GID from PeopleGroups where PID = %s" % str(PID)
+	cur.execute(theq)
+	res = cur.fetchall()
+	return [x[0] for x in res]
 
 def GetInterests_byPID(cur,PID):
 	theq = "select IName from PeopleLikeInterestsAL7 where PID = %s" % str(PID)
