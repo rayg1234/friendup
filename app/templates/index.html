@@ -2,7 +2,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="{{ url_for('static', filename="vendor/bootstrap/dist/js/bootstrap.js") }}"></script>
-<link href="{{ url_for('static', filename='vendor/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/bootstrap/dist/css/bootstrap.css') }}" rel="stylesheet">
 <script src="{{ url_for('static', filename="js/typeahead_old.js") }}"></script>
 <link href="{{ url_for('static', filename='css/typeahead_new.css') }}" rel="stylesheet">
 
@@ -14,41 +14,46 @@
 border-radius: 15px;
 }
 
+
 </style>
 
 <div class="”container”">
 
+	<div style="padding-left: 15.5px">
+	<h1><a href="”#”">UpFindr</a></h1>
+	</div>
 
+	<div class="col-sm-3">
 
-<h1><a href="”#”">UpFindr</a></h1>
-<div class="col-sm-3">
-
-<div class="panel panel-default">
-  	<div class="panel-body">
-	    <form role="form">
-			  <div class="form-group">
-			    <label for="lb1">Your Meetup ID</label>
-			    <input type="" class="form-control" id="ID_Meetupid" placeholder="eg: 148054682" size="37">
-			  </div>
-			  <div class="form-group">
-			    <label for="lb2">Your Activity</label>
-			    <input type="" class="form-control" id="ID_PrimeActivity" placeholder="eg: Snowboarding" size= "37">
-			   </div>
-			  <div class="form-group">
-			    <label for="lb3">Your Other Top Interests</label>
-			    <input type="" class="form-control" id="ID_Interest1" placeholder="eg: Salsa" size= "37">
-			    <input type="" class="form-control" id="ID_Interest2" placeholder="eg: Swimming" size= "37">
-			    <input type="" class="form-control" id="ID_Interest3" placeholder="eg: Electronic Music" size= "37">
-			 
-			  </div>
-			  <button ID="ID_getmatch" type="submit" class="btn btn-default">Match Now!</button>
+		<div class="panel panel-default">
+	  		<div class="panel-body">
+		    	<form role="form">
+				  <div class="form-group">
+				    <label for="lb1">Your Meetup ID</label>
+				    <input type="" class="form-control" id="ID_Meetupid" placeholder="eg: 148054682" size="37">
+				  </div>
+				  <div class="form-group">
+				    <label for="lb2">Your Activity</label>
+				    <input type="" class="form-control" id="ID_PrimeActivity" placeholder="eg: Snowboarding" size= "37">
+				   </div>
+				  <div class="form-group">
+				    <label for="lb3">Your Other Top Interests</label>
+				    <input type="" class="form-control" id="ID_Interest1" placeholder="eg: Salsa" size= "37">
+				    <input type="" class="form-control" id="ID_Interest2" placeholder="eg: Swimming" size= "37">
+				    <input type="" class="form-control" id="ID_Interest3" placeholder="eg: Electronic Music" size= "37">
+				 
+				  </div>
+				  <div align="center">	
+				  <button ID="ID_getmatch" type="submit" class="btn btn-lg">Match Now!</button>
+				  </div>
 			</form>
 
-
+			</div>
+		</div>
 	</div>
-</div>
-</div>
+
 	<div class="col-md-6">
+	
              <div class="panel panel-default">
 		<div class="panel-body">
 			<div class="col-lg-9" id="datatablediv">
@@ -65,7 +70,6 @@ border-radius: 15px;
 
 
         
-</div>
 
 <script>	
 	var testid = ['1234'];

@@ -88,17 +88,24 @@ def GetIntersect(cur,interestset,matchID):
 	return set(curset).intersection(set(interestset))
 
 def ReFactorScores_Balanced(cur,matches,intsets,**kwargs):
+	#print intsets
 	scorecount = []
 	bscore = []
+	theintersects = []
 	for r in matches:
-		thescores = [len(GetIntersect(cur,x,r[0])) for x in intsets]
+		curintersect = [list(GetIntersect(cur,x,r[0])) for x in intsets]
+
+		theintersects.append(curintersect)
+		thescores = [len(x) for x in curintersect]
 		scorecount.append(thescores)
 		y = 1.0
 		for x in thescores:
 			y = (x+1)*y
 		bscore.append(y**(0.25))
-	xs, sorted_matches = zip(*sorted(zip(bscore,matches),reverse=True))
-	return sorted_matches
+	sorted_bscore, sorted_matches,sorted_scorecount ,sorted_intersects = zip(*sorted(zip(bscore,matches,scorecount,theintersects),reverse=True))
+	#print sorted_scorecount
+	#print sorted_intersects
+	return sorted_matches,sorted_intersects
 	
 
 
@@ -144,5 +151,14 @@ def GetPhoto_byPID(cur,PID):
 	cur.execute(theq)
 	res = cur.fetchall()
 	return [x[0] for x in res]
+
+def GetLocation_byPID(cur,PID):
+	theq = "select Location from People where PID=%s" % str(PID)
+	cur.execute(theq)
+	res = cur.fetchall()
+	if len(res[0])>0:
+		return res[0][0]
+	else:
+		return ''
 
 

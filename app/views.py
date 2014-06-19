@@ -20,19 +20,8 @@ model1 = W2V.Word2Vec.load_word2vec_format('vectors7850.bin', binary=True)
 @app.route('/', methods =['GET', 'POST'])
 @app.route('/index', methods =['GET', 'POST'])
 def index():
-	form = LoginForm()
-	total = 0
-	
-	if form.validate_on_submit():
-		print "valid"
-		#get all other ints
 
-
-
-		results = {'key':'value'}
-
-		return render_template('/index.html',form=form,results = results)
-	return render_template('/index.html', title ='Test',form = form)
+	return render_template('/index.html')
 
 @app.route('/generate_match')
 def generate_match():
@@ -55,46 +44,58 @@ def generate_match():
 	if(topinterests == []):
 		return "null"
 
+	
+
 	#get the primary interest set with high fidelity
-	primary_intset = GetMatch.GenerateInterestSet([primeint],model1,0.60)
+	primary_intset = GetMatch.GenerateInterestSet([primeint],model1,0.55)
 	topintsets =[]
 	for i in topinterests:
-	    topintsets.append(GetMatch.GenerateInterestSet([i],model1,0.55))
-	intset_all = GetMatch.GenerateInterestSet(topinterests,model1,0.55)
+	    topintsets.append(GetMatch.GenerateInterestSet([i],model1,0.45))
+	intset_all = GetMatch.GenerateInterestSet(topinterests,model1,0.45)
 
 	#get subset of primary matches
 	primarymatches = GetMatch.MatchOnInterests(cur,primary_intset,limit=10000)
 	PIDS = [x[2] for x in primarymatches]
 	
 	#get refined matches on other matches
-	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=20)
-	r = GetMatch.ReFactorScores_Balanced(cur,r,topintsets)
-	
+	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=10)
+
+	allsets = []
+	allsets.append(primary_intset)
+	y = [allsets.append(x) for x in topintsets]
+	#print allsets
+	r,intersects = GetMatch.ReFactorScores_Balanced(cur,r,allsets)
+
 	#start with r[0]
 	ret = {}
 	for i,currentmatch in enumerate(r):
 		#currentmatch = r[0]
-		matchphotos = GetMatch.GetPhoto_byPID(cur,currentmatch[0])
+		curmatchPID = currentmatch[0]
+
+		matchphotos = GetMatch.GetPhoto_byPID(cur,curmatchPID)
 		if(matchphotos == []):
 			matchphoto = "/static/happyface1.jpg"
 		else:
 			matchphoto = matchphotos[0]
 		matchname = currentmatch[1]
-		matchset_top = list(GetMatch.GetIntersect(cur,primary_intset,currentmatch[0]))
-		matchset_rest = []
-		#print currentmatch[0]
-		#print matchset_top
-		for curset in topintsets:
-			theintersect = GetMatch.GetIntersect(cur,curset,currentmatch[0])
+		matchloc = GetMatch.GetLocation_byPID(cur,curmatchPID)
+
+		#matchset_top = list(GetMatch.GetIntersect(cur,primary_intset,curmatchPID))
+		#matchset_rest = []
+
+		#for curset in topintsets:
+		#	theintersect = GetMatch.GetIntersect(cur,curset,curmatchPID)
 			#intersect1 = []
 			#for x in theintersect:
 			#	intersect1.append(x.encode('ascii', 'ignore'))
-			matchset_rest.append(list(theintersect))
-
+		#	matchset_rest.append(list(theintersect))
+		
 		ret[i] = {'photo':{'you':"/static/happyface1.jpg",'match':matchphoto},\
 			'name':{'you':'You','match':removeNonAscii(matchname)},\
-			'matchset_top':{'you':[primeint],'match':matchset_top},\
-			'matchset_rest': {'you':[[x] for x in topinterests],'match':matchset_rest}}
+			'matchset_rest': {'you':'a','match':intersects}, \
+			'link': {'you':'#','match':"http://www.meetup.com/members/" + str(curmatchPID)}, \
+			'location': {'you':'#','match':matchloc}}
+
 
     	return jsonify(ret)
 
