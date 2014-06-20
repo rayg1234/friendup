@@ -82,7 +82,7 @@ function tabulate_new(thedata) {
 	var barHeight = 45;
 
 	var margin = {top: 0, right: 30, bottom: 0, left: 0},
-    			width = 380 - margin.left - margin.right,
+    			width = 360 - margin.left - margin.right,
     			height = 180 - margin.top - margin.bottom;
 		
 
@@ -110,8 +110,8 @@ function tabulate_new(thedata) {
 
 	var GenerateIntPanel = function(d,i) {
 		//console.log(i);
-		//bar.transition().duration(500)
-		//.attr("width", bar.attr("width") * 1 + 10 );
+		
+
 		if(panel_interests !== undefined) 
 			panel_interests.remove();
 
@@ -134,19 +134,21 @@ function tabulate_new(thedata) {
 	}
 
 
-	bar.append("rect").attr("class","bar")
-		.attr("width", x)
-	    	.attr("height", barHeight - 1)
+	bar.append("rect").attr("id","thebar").attr("class","bar")
 		.on("click", GenerateIntPanel)
-		//.on("mouseout",RemoveIntPanel);
-		
+		.attr("width", 0)
+	    	.attr("height", barHeight - 1)
 
+		//.on("mouseout",RemoveIntPanel);
+	d3.selectAll("#thebar").transition().duration(500).attr("width", x)
+		
 	bar.append("text")
 		.attr("x", function(d) { return x(d) + 3 ; })
 		.attr("y", barHeight / 2)
 		.attr("dy", ".35em")
 		.text(function(d,i) { return thelabels[i]; });
 
+	
 
 
     return;

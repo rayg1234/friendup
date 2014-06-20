@@ -67,11 +67,11 @@ def generate_match():
 	intset_all = GetMatch.GenerateInterestSet(topinterests,model1,0.45)
 
 	#get subset of primary matches
-	primarymatches = GetMatch.MatchOnInterests(cur,primary_intset,limit=5000)
+	primarymatches = GetMatch.MatchOnInterests(cur,primary_intset,limit=10000)
 	PIDS = [x[2] for x in primarymatches]
 	
 	#get refined matches on other matches
-	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=10)
+	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=20)
 
 	allsets = []
 	allsets.append(primary_intset)
