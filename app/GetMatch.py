@@ -122,7 +122,7 @@ def ReFactorScores_Balanced(cur,matches,intsets,**kwargs):
 	sorted_bscore, sorted_matches,sorted_scorecount ,sorted_intersects = zip(*sorted(zip(bscore,matches,scorecount,theintersects),reverse=True))
 	#print sorted_scorecount
 	#print sorted_intersects
-	return sorted_matches,sorted_intersects
+	return sorted_matches,sorted_intersects,sorted_scorecount
 	
 
 

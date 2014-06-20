@@ -10,6 +10,7 @@ from dbconfig import theconfig
 import GetMatch
 from Utils import removeNonAscii
 import pickle
+import numpy
 
 # To create a database connection, add the following
 # within your view functions:
@@ -70,7 +71,7 @@ def generate_match():
 	PIDS = [x[2] for x in primarymatches]
 	
 	#get refined matches on other matches
-	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=20)
+	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=10)
 
 	allsets = []
 	allsets.append(primary_intset)
@@ -88,7 +89,7 @@ def generate_match():
 
 	#print groupset
 
-	r,intersects = GetMatch.ReFactorScores_Balanced(cur,r,allsets)
+	r,intersects,sorted_scorecount = GetMatch.ReFactorScores_Balanced(cur,r,allsets)
 
 	#start with r[0]
 	ret = {}
@@ -104,10 +105,12 @@ def generate_match():
 		matchloc = GetMatch.GetLocation_byPID(cur,curmatchPID)
 		matchgroups = GetMatch.GetGroups_byPID(cur,curmatchPID)
 		
+		groupintcount = []
 		groupnames = []
 		for g in groupset:
 			matchgroupintersects = GetMatch.GetGroupIntersect_byPID(cur,list(g),curmatchPID)
 			groupnames.append([gids_names[m] for m in matchgroupintersects])
+			groupintcount.append(len(matchgroupintersects))
 			#print groupnames	
 		
 		ret[i] = {'photo': matchphoto,\
@@ -115,7 +118,9 @@ def generate_match():
 			'matchset_rest': intersects[i], \
 			'link': "http://www.meetup.com/members/" + str(curmatchPID), \
 			'location': matchloc, \
-			'groupname': groupnames }
+			'groupname': groupnames, \
+			'catagories': [primeint]+topinterests, \
+			'scores': list(numpy.array(sorted_scorecount[i]) + numpy.array(groupintcount)) }
 	
 
     	return jsonify(ret)

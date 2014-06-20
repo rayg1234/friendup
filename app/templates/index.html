@@ -2,18 +2,73 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="{{ url_for('static', filename="vendor/bootstrap/dist/js/bootstrap.js") }}"></script>
-<link href="{{ url_for('static', filename='vendor/bootstrap/dist/css/bootstrap.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendor/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 <script src="{{ url_for('static', filename="js/typeahead_old.js") }}"></script>
 <link href="{{ url_for('static', filename='css/typeahead_new.css') }}" rel="stylesheet">
 
+
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="static/MatchPanel.js"></script>
+<script src="static/autocomplete.js"></script>
 
 <style>
 
-.roundrect {
-border-radius: 15px;
+.chart rect {
+  fill: steelblue;
 }
 
+.chart text {
+  fill: black;
+  font: 15px sans-serif;
+  text-anchor: front;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+img {
+    border-radius: 10px 10px 10px 10px;
+}
+
+.panel-body {
+	background-color: #dff0d8;
+	
+}
+
+.bs-example {
+margin-left: 0;
+margin-right: 0;
+background-color: #fff;
+border-width: 1px;
+border-color: #ddd;
+border-radius: 4px 4px 0 0;
+box-shadow: none;
+}
+
+.nav-pills>li+li {
+display: block;
+padding: 0px 1px 1px 0px;
+
+}
+
+.nav-pills>li>a {
+background-color: #eee;
+}
+
+.btn-lg, .btn-group-lg>.btn {
+padding: 10px 16px;
+font-size: 18px;
+line-height: 1.33;
+border-radius: 6px;
+background-color: #5cb85c;
+}
+
+.label-danger>a {
+color: white;
+background-color: #d9534f;
+}
 
 </style>
 
@@ -24,8 +79,7 @@ border-radius: 15px;
 	</div>
 
 	<div class="col-sm-3">
-
-		<div class="panel panel-default">
+		<div class="panel panel-default" al>
 	  		<div class="panel-body">
 		    	<form role="form">
 				  <div class="form-group">
@@ -34,11 +88,11 @@ border-radius: 15px;
 				  </div>
 				  <div class="form-group">
 				    <label for="lb2">Your Activity</label>
-				    <input type="" class="form-control" id="ID_PrimeActivity" placeholder="eg: Snowboarding" size= "37">
+				    <input type="" class="form-control" id="ID_PrimeActivity" value="Snowboarding" size= "37">
 				   </div>
 				  <div class="form-group">
 				    <label for="lb3">Your Other Top Interests</label>
-				    <input type="" class="form-control" id="ID_Interest1" placeholder="eg: Salsa" size= "37">
+				    <input type="" class="form-control" id="ID_Interest1" value="Trance" size= "37">
 				    <input type="" class="form-control" id="ID_Interest2" placeholder="eg: Swimming" size= "37">
 				    <input type="" class="form-control" id="ID_Interest3" placeholder="eg: Electronic Music" size= "37">
 				 
@@ -52,164 +106,21 @@ border-radius: 15px;
 		</div>
 	</div>
 
-	<div class="col-md-6">
+	<div class="col-md-6" id="datapanel">
 	
-             <div class="panel panel-default">
-		<div class="panel-body">
-			<div class="col-lg-9" id="datatablediv">
-				<table class="table">
-					<thead></thead>
-					<tbody></tobdy>
-				</table>
-			</div>
-		</div>
-            </div>
         </div>
 
 </div>
 
 
-        
-
-<script>	
-	var testid = ['1234'];
-
-	$("#ID_PrimeActivity").attr("autocomplete", "off");
-	$('#ID_PrimeActivity').typeahead({prefetch: "static/sample1.json"});
-
-	$("#ID_Meetupid").attr("autocomplete", "off");
-	$('#ID_Meetupid').typeahead({local: testid});
-
-
-	$("#ID_Interest1").attr("autocomplete", "off");
-	$('#ID_Interest1').typeahead({prefetch: "static/sample1.json"});
-	$("#ID_Interest2").attr("autocomplete", "off");
-	$('#ID_Interest2').typeahead({prefetch: "static/sample1.json"});
-	$("#ID_Interest3").attr("autocomplete", "off");
-	$('#ID_Interest3').typeahead({prefetch: "static/sample1.json"});
-
-	$('.tt-hint').addClass('form-control');
-	//$('#PID1').typeahead({local: mySource});
-
-	
-</script>
 
 
 
 <script type=text/javascript>
 
-var thecurrentdata;
-var currentmatch_ind = 0;
-var totalmatches = 0;
-
-$(function() {
-	$('#ID_getmatch').bind('click', function() {
-		console.log("get match clicked")
-
-		$.getJSON('/generate_match', {
-			primeint: $('input[id="ID_PrimeActivity"]').val(),
-			int1: $('input[id="ID_Interest1"]').val(),
-			int2: $('input[id="ID_Interest2"]').val(),
-			int3: $('input[id="ID_Interest3"]').val(),
-			}, function(data) {
-			thecurrentdata = data;
-			//console.log(data)
-			//$("#result").text(data.result);
-
-			
-			// render the table
-			totalmatches = Object.keys(data).length
-			tabulate_new(data[0]);
-		});
-		return false;
-	});
-});
-
-function tabulate_new(thedata) {
-
-	console.log(thedata)
-	var tbody = d3.select('tbody');
-
-	tbody.selectAll("tr").remove();
-    	// create a row for each object in the data
-	//using part d3 part jquery right now, but not neccesary 
-	var names_row = tbody.selectAll("tr")
-		 .data(['namerow'],function(d){return d;})
-		 .enter()
-		 .append("tr");
-
-	names_row
-		.selectAll("td")
-		.data([thedata['name']['you'],'',thedata['name']['match']])
-		.enter()
-		.append("td")
-		  .text(function(d) { return d; });
-	
-	var photos_row = tbody.selectAll("tr")
-		.data(['photorow'],function(d){return d;})
-		.enter()
-		.append("tr");
-
-	photos_row
-		.append("td")
-		.append("img")
-		.attr("width",75)
-		.attr("height",75)
-		.attr("class","roundrect")
-		.attr("src", thedata['photo']['you']);
-
-	photos_row.append("td");
-	
-	photos_row
-		.append("td")
-		.append("img")
-		.attr("width",75)
-		.attr("height",75)
-		.attr("class","roundrect")
-		.attr("src", thedata['photo']['match']);
-
-	var primeint_row = tbody.selectAll("tr")
-		.data(['primerow'],function(d){return d;})
-		.enter()
-		.append("tr");
-
-	primeint_row.append("td").text(thedata['matchset_top']['you']);
-	primeint_row.append("td");
-	newtd = primeint_row.append("td");
-	for(i=0, len=thedata['matchset_top']['match'].length;i<len;i++) {
-		newtd.append("tr").text(thedata['matchset_top']['match'][i]);
-	}
-	
-	
-	//append a row for each interest set match
-	for(i=0, len=thedata['matchset_rest']['match'].length;i<len;i++) {
-		newrow = tbody.append("tr");
-		
-		newtd = newrow.append("td");
-		for(j=0;j<thedata['matchset_rest']['you'][i].length;j++) {
-			newtd.append("tr").text(thedata['matchset_rest']['you'][i][j]);
-		}
-		newrow.append("td").text("");
-		newtd = newrow.append("td");
-		for(j=0;j<thedata['matchset_rest']['match'][i].length;j++) {
-			newtd.append("tr").text(thedata['matchset_rest']['match'][i][j]);
-		}	
-	}
-
-	nextbt = tbody.append("tr")
-		.append("button")
-		.attr("id","nextbt")
-		.attr("align","left")
-		.attr("class","btn btn-default")
-		.text("Next Match");
-	$('#nextbt').bind('click', function() { 
-		currentmatch_ind = currentmatch_ind +1;
-		tabulate_new(thecurrentdata[currentmatch_ind%totalmatches]);
-	});
 
 
-    return;
-}
+
 
 </script>
 
