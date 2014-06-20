@@ -46,7 +46,7 @@ function tabulate_new(thedata) {
 
 	var row_mid = datapanel.append("div").attr("class","row").attr("align","center");
 	var col_left = row_mid.append("div").attr("class","col-md-4");
-	var col_right = row_mid.append("div").attr("class","col-md-8");
+	var col_right = row_mid.append("div").attr("class","col-md-8").attr("align","left");
 
 	var row_bot = datapanel.append("div").attr("class","row").style("padding-left","20px").style("padding-right","20px").attr("align","center");
 
@@ -81,8 +81,8 @@ function tabulate_new(thedata) {
 	//create svg plot
 	var barHeight = 45;
 
-	var margin = {top: 0, right: 30, bottom: 0, left: 0},
-    			width = 360 - margin.left - margin.right,
+	var margin = {top: 0, right: 30, bottom: 0, left: 10},
+    			width = 400 - margin.left - margin.right,
     			height = 180 - margin.top - margin.bottom;
 		
 
@@ -98,7 +98,7 @@ function tabulate_new(thedata) {
 
 	var x = d3.scale.linear()
 	    .domain([0, d3.max(testdata)])
-	    .range([0, width - 60]);
+	    .range([0, width - 70]);
 
 	var bar = svg.selectAll("g")
 	    .data(testdata)
