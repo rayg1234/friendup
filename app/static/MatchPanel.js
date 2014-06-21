@@ -98,7 +98,7 @@ function tabulate_new(thedata) {
 
 	var x = d3.scale.linear()
 	    .domain([0, d3.max(testdata)])
-	    .range([0, width - 70]);
+	    .range([0, width - 85]);
 
 	var bar = svg.selectAll("g")
 	    .data(testdata)

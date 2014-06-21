@@ -71,7 +71,7 @@ def generate_match():
 	PIDS = [x[2] for x in primarymatches]
 	
 	#get refined matches on other matches
-	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=20)
+	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=10)
 
 	allsets = []
 	allsets.append(primary_intset)
