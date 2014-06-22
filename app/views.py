@@ -77,6 +77,7 @@ def generate_match():
 	y = [allintsets_expanded.append(x) for x in top_intsets_expanded]
 
 	groupset_expanded = GetMatch.ExpandGroups(allintsets_expanded,scaleddict_int_to_groups)
+	print groupset_expanded
 
 	#print groupset
 

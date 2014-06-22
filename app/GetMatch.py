@@ -38,7 +38,7 @@ def ExpandGroups(intsets,int_to_groups):
 		curgroupset = set()
 		for curint in curset:			
 			if curint in int_to_groups:
-				curgroupset = curgroupset.union([key for key,val in int_to_groups[curint].iteritems() if val>0.01])
+				curgroupset = curgroupset.union([key for key,val in int_to_groups[curint].iteritems() if val>0.005])
 		groupset.append(curgroupset)
 	
 	return groupset 
