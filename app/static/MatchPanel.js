@@ -28,7 +28,7 @@ $(function() {
 });
 
 function tabulate_new(thedata) {
-
+	//
 	var testdata = thedata['scores'];
 	var thelabels = thedata['catagories'];
 	var matchsets = thedata['matchset_rest'];
@@ -82,7 +82,7 @@ function tabulate_new(thedata) {
 	var barHeight = 45;
 
 	var margin = {top: 0, right: 30, bottom: 0, left: 10},
-    			width = 400 - margin.left - margin.right,
+    			width = 430 - margin.left - margin.right,
     			height = 180 - margin.top - margin.bottom;
 		
 
@@ -98,7 +98,7 @@ function tabulate_new(thedata) {
 
 	var x = d3.scale.linear()
 	    .domain([0, d3.max(testdata)])
-	    .range([0, width - 85]);
+	    .range([0, width - 150]);
 
 	var bar = svg.selectAll("g")
 	    .data(testdata)

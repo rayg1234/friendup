@@ -13,10 +13,10 @@ def CloseConnection(conn,cur):
 	cur.close()
 	conn.close()
 
-def GenerateInterestSet(PrimaryInts,model,cutoff):
+def ExpandInterestSet(theinterests,model,cutoff):
 	intset = []
 	modelcutoff = cutoff
-	for r in PrimaryInts:
+	for r in theinterests:
 		if(r == '' or r is None):
 			continue;
 		try:
@@ -27,8 +27,21 @@ def GenerateInterestSet(PrimaryInts,model,cutoff):
 			print str(KeyError) + " " + str(r)
 		
 	intset = list(set(intset))
-	#print intset
+
 	return intset
+
+def ExpandGroups(intsets,int_to_groups):
+
+	groupset = []
+	
+	for curset in intsets:
+		curgroupset = set()
+		for curint in curset:			
+			if curint in int_to_groups:
+				curgroupset = curgroupset.union([key for key,val in int_to_groups[curint].iteritems() if val>0.01])
+		groupset.append(curgroupset)
+	
+	return groupset 
 
 def MatchOnInterests(cur,theinterests,**kwargs):
 	lim = kwargs.get('limit',None) #total results to return
@@ -90,7 +103,7 @@ def GetIntersect(cur,interestset,matchID):
 	return set(curset).intersection(set(interestset))
 
 def GetGroupIntersect_byPID(cur,groupids,PID):
-	if(groupids == []):
+	if(list(groupids) == []):
 		print "Null interests"
 		return []
 	x = ''
@@ -104,11 +117,51 @@ def GetGroupIntersect_byPID(cur,groupids,PID):
 	res = cur.fetchall()
 	return [x[0] for x in res]
 
-def ReFactorScores_Balanced(cur,matches,intsets,**kwargs):
-	#print intsets
-	scorecount = []
-	bscore = []
-	theintersects = []
+def Get_Intersecting_Intersets(cur,matches,intsets):
+	scorecount = [] #the 'score' for each category of interests
+	theintersects = [] #intersecting interest sets
+
+	for r in matches:
+		curintersect = [list(GetIntersect(cur,x,r[0])) for x in intsets]
+
+		theintersects.append(curintersect)
+		thescores = [len(x) for x in curintersect]
+		scorecount.append(thescores)
+	
+	return theintersects,scorecount
+
+
+def Get_Intersecting_Groups(cur,matches,groupsets):
+	scorecount = [] #the 'score' for each category of interests
+	groupintersects = [] #intersecting interest sets
+
+	for r in matches:
+		curintersect = [GetGroupIntersect_byPID(cur,x,r[0]) for x in groupsets]
+		groupintersects.append(curintersect)
+		thescores = [len(x) for x in curintersect]
+		scorecount.append(thescores)
+
+	return groupintersects,scorecount
+
+def Reorder_matches(cur,groupscores,intscores):
+	bscores = []
+	for i in range(0,len(intscores)):
+		g = groupscores[i] #score for person i
+		s = intscores[i]
+		y = 1.0
+
+		for j in range(0,len(s)):
+			y = (g[j]+s[j]+1)*y
+		bscores.append(y**(1/float(len(s))))
+
+	return bscores
+
+def ReFactorScores_Balanced(cur,matches,intsets,groupsets,**kwargs):
+
+	scorecount = [] #the 'score' for each category of interests
+	bscore = [] #the geometric mean score
+	theintersects = [] #intersecting interest sets
+
 	for r in matches:
 		curintersect = [list(GetIntersect(cur,x,r[0])) for x in intsets]
 
@@ -159,6 +212,7 @@ def DropView(cur,viewname):
 
 def GetGroups_byPID(cur,PID):
 	theq = "select GID from PeopleGroups where PID = %s" % str(PID)
+	#print theq
 	cur.execute(theq)
 	res = cur.fetchall()
 	return [x[0] for x in res]

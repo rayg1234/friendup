@@ -57,43 +57,48 @@ def generate_match():
 		return "null"
 
 
-
-
 	#get the primary interest set with high fidelity
-	primary_intset = GetMatch.GenerateInterestSet([primeint],model1,0.55)
-	topintsets =[]
+	primary_intset_expanded = GetMatch.ExpandInterestSet([primeint],model1,0.55)
+	top_intsets_expanded =[]
 	for i in topinterests:
-	    topintsets.append(GetMatch.GenerateInterestSet([i],model1,0.45))
-	intset_all = GetMatch.GenerateInterestSet(topinterests,model1,0.45)
+	    top_intsets_expanded.append(GetMatch.ExpandInterestSet([i],model1,0.45))
+	intset_all = GetMatch.ExpandInterestSet(topinterests,model1,0.45)
 
 	#get subset of primary matches
-	primarymatches = GetMatch.MatchOnInterests(cur,primary_intset,limit=10000)
+	primarymatches = GetMatch.MatchOnInterests(cur,primary_intset_expanded,limit=10000)
 	PIDS = [x[2] for x in primarymatches]
 	
 	#get refined matches on other matches
-	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=10)
+	r = GetMatch.MatchOnInterests_subset(cur,intset_all,PIDS,limit=20)
 
-	allsets = []
-	allsets.append(primary_intset)
-	y = [allsets.append(x) for x in topintsets]
-	#print allsets
+	#get a list of the expanded set of all interests	
+	allintsets_expanded = []
+	allintsets_expanded.append(primary_intset_expanded)
+	y = [allintsets_expanded.append(x) for x in top_intsets_expanded]
 
-	groupset = []
-	
-	for curset in allsets:
-		curgroupset = set()
-		for curint in curset:			
-			if curint in scaleddict_int_to_groups:
-				curgroupset = curgroupset.union([key for key,val in scaleddict_int_to_groups[curint].iteritems() if val>0.01])
-		groupset.append(curgroupset)
+	groupset_expanded = GetMatch.ExpandGroups(allintsets_expanded,scaleddict_int_to_groups)
 
 	#print groupset
 
-	r,intersects,sorted_scorecount = GetMatch.ReFactorScores_Balanced(cur,r,allsets)
+	#r,intersects,sorted_scorecount = GetMatch.ReFactorScores_Balanced(cur,r,allintsets_expanded,groupset_expanded)
 
+	intersecting_groups,groupscores = GetMatch.Get_Intersecting_Groups(cur,r,groupset_expanded)
+	intersecting_ints,intscores = GetMatch.Get_Intersecting_Intersets(cur,r,allintsets_expanded)
+	
+	bscores = GetMatch.Reorder_matches(cur,groupscores,intscores)
+
+	reordered_matches = [x for (y,x) in sorted(zip(bscores,r),reverse=True)]
+	reordered_intersecting_ints = [x for (y,x) in sorted(zip(bscores,intersecting_ints),reverse=True)]
+	reordered_intersecting_groups = [x for (y,x) in sorted(zip(bscores,intersecting_groups),reverse=True)]
+	reordered_intscores = [x for (y,x) in sorted(zip(bscores,intscores),reverse=True)]
+	reordered_groupscores = [x for (y,x) in sorted(zip(bscores,groupscores),reverse=True)]
+
+
+	#print reordered_intersecting_groups [0][0]
 	#start with r[0]
 	ret = {}
-	for i,currentmatch in enumerate(r):
+	for i,currentmatch in enumerate(reordered_matches):
+
 		curmatchPID = currentmatch[0]
 
 		matchphotos = GetMatch.GetPhoto_byPID(cur,curmatchPID)
@@ -103,24 +108,18 @@ def generate_match():
 			matchphoto = matchphotos[0]
 		matchname = currentmatch[1]
 		matchloc = GetMatch.GetLocation_byPID(cur,curmatchPID)
-		matchgroups = GetMatch.GetGroups_byPID(cur,curmatchPID)
+		#matchgroups = GetMatch.GetGroups_byPID(cur,curmatchPID)
 		
-		groupintcount = []
-		groupnames = []
-		for g in groupset:
-			matchgroupintersects = GetMatch.GetGroupIntersect_byPID(cur,list(g),curmatchPID)
-			groupnames.append([gids_names[m] for m in matchgroupintersects])
-			groupintcount.append(len(matchgroupintersects))
-			#print groupnames	
+		groupnames = [[gids_names[m] for m in x] for x in reordered_intersecting_groups[i]]	
 		
 		ret[i] = {'photo': matchphoto,\
 			'name': removeNonAscii(matchname),\
-			'matchset_rest': intersects[i], \
+			'matchset_rest': reordered_intersecting_ints[i], \
 			'link': "http://www.meetup.com/members/" + str(curmatchPID), \
 			'location': matchloc, \
 			'groupname': groupnames, \
 			'catagories': [primeint]+topinterests, \
-			'scores': list(numpy.array(sorted_scorecount[i]) + numpy.array(groupintcount)) }
+			'scores': list(numpy.array(reordered_intscores[i]) + numpy.array(reordered_groupscores[i])) }
 	
 
     	return jsonify(ret)
