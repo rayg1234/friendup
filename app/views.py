@@ -17,14 +17,14 @@ import numpy
 # con = con_db(host, port, user, passwd, db)
 
 #load the interest to group conversion dictionary
-with open('static/data/scaleddict_int_to_groups.pickl') as f:
+with open('app/static/data/scaleddict_int_to_groups.pickl') as f:
     scaleddict_int_to_groups = pickle.load(f)[0]
 
-with open('static/data/groupids_names_public') as f:
+with open('app/static/data/groupids_names_public') as f:
     gids_names = pickle.load(f)[0]
 
 cur = GetMatch.GetConnection()
-model1 = W2V.Word2Vec.load_word2vec_format('static/data/vectors7850.bin', binary=True)
+model1 = W2V.Word2Vec.load_word2vec_format('app/static/data/vectors7850.bin', binary=True)
 
 print "all data loaded"
 
