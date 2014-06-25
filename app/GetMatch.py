@@ -20,7 +20,7 @@ def ExpandInterestSet(theinterests,model,cutoff):
 		if(r == '' or r is None):
 			continue;
 		try:
-			sims = model.most_similar(positive=[r.replace(" ","_")],topn=10)
+			sims = model.most_similar(positive=[r.replace(" ","_")],topn=8)
 			[intset.append((x[0])) for x in sims if x[1] > modelcutoff]
 			intset.append(r)
 		except(KeyError):

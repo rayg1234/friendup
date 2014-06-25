@@ -4,7 +4,9 @@
 <script src="{{ url_for('static', filename="vendor/bootstrap/dist/js/bootstrap.js") }}"></script>
 <link href="{{ url_for('static', filename='vendor/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
 <script src="{{ url_for('static', filename="js/typeahead_old.js") }}"></script>
+
 <link href="{{ url_for('static', filename='css/typeahead_new.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename="js/spin.js") }}"></script>
 
 
 
@@ -30,7 +32,7 @@ img {
     border-radius: 10px 10px 10px 10px;
 }
 
-.panel-body {
+.panel-default {
 	background-color: #dff0d8;
 	
 }
@@ -83,26 +85,60 @@ background-size: cover;
 
 }
 
+.navbar-inverse {
+	background-color: #DCF1EC;
+	border-color: #DCF1EC;
+}
+.navbar-inverse .navbar-nav>li>a {
+font-size: 20px;
+color: black;
+
+}
+
+.navbar-inverse .navbar-brand {
+color: black;
+font-size: 30px;
+}
 </style>
 
 <body>
 
+    <div class="navbar navbar-inverse" role="navigation" id="nav">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><span><font color="red"><b>Up</b></font>Findr</span></a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="http://slides.com/raygao/upfindr-com#/">Slides</a></li>
+            <li><a href="#">Author</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
 <div class="container" id="mainform">
+
 	
 	<div class="row">
-
-			<div style="padding-left: 15.5px">
-			<h1><font color=#990033>UpFindr</font></h1>
-			</div>
-
-
-
+	<p></p>
 	</div>
-
+	<div class="row">
+	<p></p>
+	</div>
 	<div class="row">
 
 	<div class="col-sm-3">
 		<div class="panel panel-default" al>
+			<div style="padding-left: 15px">
+			<h4><font color=#990033><I>Find Your Activity Partners</I></font></h4>
+			</div>
 	  		<div class="panel-body">
 		    	<form role="form">
 				  <div class="form-group">
@@ -121,7 +157,7 @@ background-size: cover;
 				 
 				  </div>
 				  <div align="center">	
-				  <button ID="ID_getmatch" type="submit" class="btn btn-lg">Match Now!</button>
+				  <button ID="ID_getmatch" type="submit" class="btn btn-lg">Match Now</button>
 				  </div>
 			</form>
 
@@ -143,8 +179,14 @@ background-size: cover;
 <script src="static/autocomplete.js"></script>
 
 <script>
-d3.select('#mainform').style("opacity", .94);
-d3.select('#mainform').style("opacity", .94);
+d3.select('#mainform').style("opacity", .92);
+d3.select('#mainform').style("opacity", .92);
+d3.select('#nav').style("opacity", .65);
+
+
+
+
+
 </script>
 
 
