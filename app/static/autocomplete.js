@@ -1,5 +1,5 @@
 var testid = ['1234'];
-var dictpath = "static/reduced_vocab.json";
+var dictpath = "static/NewDict3444.json";
 
 $("#ID_PrimeActivity").attr("autocomplete", "off");
 $('#ID_PrimeActivity').typeahead({prefetch: dictpath});

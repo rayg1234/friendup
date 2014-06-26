@@ -1,4 +1,8 @@
+<html>
 
+<head>
+<title>UpFindr</title>
+</head>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="{{ url_for('static', filename="vendor/bootstrap/dist/js/bootstrap.js") }}"></script>
@@ -8,11 +12,14 @@
 <link href="{{ url_for('static', filename='css/typeahead_new.css') }}" rel="stylesheet">
 <script src="{{ url_for('static', filename="js/spin.js") }}"></script>
 
+<link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico" />
+
 
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
 <style>
+
 
 .chart rect {
   fill: steelblue;
@@ -188,5 +195,7 @@ d3.select('#nav').style("opacity", .65);
 
 
 </script>
+
+</html>
 
 
