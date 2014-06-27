@@ -37,7 +37,7 @@ class GetMatch():
 			curgroupset = set()
 			for curint in curset:			
 				if curint in int_to_groups:
-					curgroupset = curgroupset.union([key for key,val in int_to_groups[curint].iteritems() if val>0.01])
+					curgroupset = curgroupset.union(int_to_groups[curint])
 			groupset.append(curgroupset)
 	
 		return groupset 
@@ -51,14 +51,14 @@ class GetMatch():
 			return []
 		x = ''
 		for r in theinterests:
-	    		x +=  "\'" + r.replace("'","''") + "\',"
+	    		x +=  "\'" + str(r) + "\',"
 
 		theq = "select \
 	    			count(*), PName,PID \
 			from \
 	    			PeopleLikeInterestsAL7 \
 			where \
-	    			IName in (%s) \
+	    			IID in (%s) \
 			group by PID \
 			order by count(*) desc \
 			limit %s" % (x[0:-1].replace("_"," "),lim)
@@ -77,7 +77,7 @@ class GetMatch():
 			return []
 		x = ''
 		for r in theinterests:
-	    		x +=  "\'" + r.replace("'","''") + "\',"
+	    		x +=  "\'" + str(r) + "\',"
 
 		ids = ''
 		for r in subsetIDs:
@@ -85,7 +85,7 @@ class GetMatch():
 	
 
 		theq = "SELECT PID,PName,count(*) from PeopleLikeInterestsAL7 \
-			where IName in (%s) and \
+			where IID in (%s) and \
 			PID in (%s)\
 			group by PID \
 			order by count(*) desc\

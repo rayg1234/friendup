@@ -8,13 +8,17 @@ import GetMatch
 from Utils import removeNonAscii
 import pickle
 import numpy
+from Timer import tic,toc
 
 #load the interest to group conversion dictionary
-with open('app/static/data/scaleddict_int_to_groups.pickl') as f:
+with open('app/static/data/int_to_groups_w2v') as f:
     scaleddict_int_to_groups = pickle.load(f)[0]
 
 with open('app/static/data/groupids_names_public') as f:
     gids_names = pickle.load(f)[0]
+
+with open('app/static/data/Interest_to_IID') as f:
+    Interest_to_IID = pickle.load(f)[0]
 
 matchobj = GetMatch.GetMatch()
 model1 = W2V.Word2Vec.load_word2vec_format('app/static/data/vectors7850.bin', binary=True)
@@ -58,29 +62,38 @@ def generate_match():
 	intset_all = matchobj.ExpandInterestSet(topinterests,model1,0.45)
 
 	#get subset of primary matches
-	primarymatches = matchobj.MatchOnInterests(primary_intset_expanded,limit=1000)
+	tic()
+	intids = [Interest_to_IID[x.replace("_"," ")] for x in primary_intset_expanded if x.replace("_"," ") in Interest_to_IID]
+	primarymatches = matchobj.MatchOnInterests(intids,limit=1000)
 	PIDS = [x[2] for x in primarymatches]
-	
+	toc()
 	#get refined matches on other matches
-	r = matchobj.MatchOnInterests_subset(intset_all,PIDS,limit=10)
-
+	tic()
+	intids = [Interest_to_IID[x.replace("_"," ")] for x in intset_all if x.replace("_"," ") in Interest_to_IID]
+	r = matchobj.MatchOnInterests_subset(intids,PIDS,limit=20)
+	toc()
+	
+	
+	tic()
 	#get a list of the expanded set of all interests	
 	allintsets_expanded = []
 	allintsets_expanded.append(primary_intset_expanded)
 	y = [allintsets_expanded.append(x) for x in top_intsets_expanded]
 
 	groupset_expanded = matchobj.ExpandGroups(allintsets_expanded,scaleddict_int_to_groups)
-	#print groupset_expanded
+	
 
 	#print groupset
 
 	#r,intersects,sorted_scorecount = matchobj.ReFactorScores_Balanced(r,allintsets_expanded,groupset_expanded)
 
 	intersecting_groups,groupscores = matchobj.Get_Intersecting_Groups(r,groupset_expanded)
+	
 	intersecting_ints,intscores = matchobj.Get_Intersecting_Intersets(r,allintsets_expanded)
 	
 	bscores = matchobj.Reorder_matches(groupscores,intscores)
-
+	toc()
+	
 	reordered_matches = [x for (y,x) in sorted(zip(bscores,r),reverse=True)]
 	reordered_intersecting_ints = [x for (y,x) in sorted(zip(bscores,intersecting_ints),reverse=True)]
 	reordered_intersecting_groups = [x for (y,x) in sorted(zip(bscores,intersecting_groups),reverse=True)]

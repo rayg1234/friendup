@@ -38,6 +38,9 @@ $(function() {
 			spinner.stop();
 			thecurrentdata = data;
 			currentmatch_ind = 0;
+			if(thecurrentdata == null || thecurrentdata[0]==undefined) {
+				alert("No Matches Found, Try Again");
+			}
 			//console.log(data)
 			//$("#result").text(data.result);
 
@@ -45,7 +48,10 @@ $(function() {
 			// render the table
 			totalmatches = Object.keys(data).length
 			tabulate_new(data[0]);
-		});
+		})
+		.error(function() { 
+			spinner.stop();
+			alert("error"); });
 		return false;
 	});
 });
