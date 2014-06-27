@@ -39,7 +39,7 @@ $(function() {
 			thecurrentdata = data;
 			currentmatch_ind = 0;
 			if(thecurrentdata == null || thecurrentdata[0]==undefined) {
-				alert("No Matches Found, Try Again");
+				alert("No Matches Found, *note you must enter at least the activity and 1 top interest, spelling must be exact");
 			}
 			//console.log(data)
 			//$("#result").text(data.result);

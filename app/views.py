@@ -23,7 +23,7 @@ with open('app/static/data/Interest_to_IID') as f:
 matchobj = GetMatch.GetMatch()
 model1 = W2V.Word2Vec.load_word2vec_format('app/static/data/vectors7850.bin', binary=True)
 
-print "all data loaded"
+print "All Data Loaded"
 
 # ROUTING/VIEW FUNCTIONS
 @app.route('/', methods =['GET', 'POST'])
@@ -131,26 +131,10 @@ def generate_match():
 
     	return jsonify(ret)
 
-@app.route('/_add_numbers')
-def add_numbers():
-    a = request.args.get('a', 0, type=int)
-    b = request.args.get('b', 0, type=int)
-    return jsonify(result=a + b)
-
 @app.route('/home')
 def home():
     # Renders home.html.
 	return render_template('home.html')
-
-@app.route('/slides')
-def about():
-    # Renders slides.html.
-	return render_template('slides.html')
-
-@app.route('/author')
-def contact():
-    # Renders author.html.
-    return render_template('author.html')
 
 @app.errorhandler(404)
 def page_not_found(error):
