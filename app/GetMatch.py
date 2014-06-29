@@ -1,3 +1,12 @@
+#########################################################################################
+# GetMatch.py
+# Author: Ray Gao
+#
+#
+# Description: A combined Class for connecting to MySQL database to retrieve meetup data
+# and compute matches, scoring/reordering matches. 
+##########################################################################################
+
 import pymysql
 #import gensim
 from dbconfig import theconfig
@@ -12,6 +21,7 @@ class GetMatch():
 		self.cur.close()
 		self.conn.close()
 
+	#Expand a single interest into a set of interests using W2V model
 	def ExpandInterestSet(self,theinterests,model,cutoff):
 		intset = []
 		modelcutoff = cutoff
@@ -28,7 +38,8 @@ class GetMatch():
 		intset = list(set(intset))
 
 		return intset
-
+	
+	#Expand a set of interests into a set of groups using pre-generated dictionary containing the relationships between interests and groups
 	def ExpandGroups(self,intsets,int_to_groups):
 
 		groupset = []
@@ -42,6 +53,7 @@ class GetMatch():
 	
 		return groupset 
 
+	#Find the set of matches with the greatest intersection set of interests with the input interests
 	def MatchOnInterests(self,theinterests,**kwargs):
 		lim = kwargs.get('limit',None) #total results to return
 		if lim is None:
@@ -68,6 +80,7 @@ class GetMatch():
 		res = self.cur.fetchall() #returns a list of matches (# in common, Name, PID)
 		return [x for x in res]
 
+	#Given a set of PIDs, find a small subset of people with the greatest number of interests in common according theinterests
 	def MatchOnInterests_subset(self,theinterests,subsetIDs,**kwargs):
 		lim = kwargs.get('limit',None) #total results to return
 		if lim is None:

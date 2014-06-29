@@ -1,8 +1,8 @@
 var thecurrentdata;
 var currentmatch_ind = 0;
 var totalmatches = 0;
-//tabulate_new('');
 
+//options for the loading spinner wheel
 var opts = {
   lines: 13, // The number of lines to draw
   length: 20, // The length of each line
@@ -42,11 +42,11 @@ $(function() {
 				alert("No Matches Found. Note you must enter at least the Activity and 1 Other Top Interest, Spelling must be exact.");
 			}
 			//console.log(data)
-			//$("#result").text(data.result);
 
 			
-			// render the table
+			
 			totalmatches = Object.keys(data).length
+			//Display the current match data.
 			tabulate_new(data[0]);
 		})
 		.error(function() { 
@@ -56,8 +56,10 @@ $(function() {
 	});
 });
 
+
+//function for a creating a panel to display the matches
 function tabulate_new(thedata) {
-	//
+
 	var testdata = thedata['scores'];
 	var thelabels = thedata['catagories'];
 	var matchsets = thedata['matchset_rest'];
